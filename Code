@@ -1,0 +1,26 @@
+#include <iostream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+void organizeFiles(const std::string &path) {
+    for (const auto &entry : fs::directory_iterator(path)) {
+        if (entry.is_regular_file()) {
+            std::string extension = entry.path().extension().string();
+            std::string newFolder = path + "/" + extension.substr(1); // Remove dot from extension
+            
+            fs::create_directory(newFolder);
+            fs::rename(entry.path(), newFolder + "/" + entry.path().filename().string());
+        }
+    }
+}
+
+int main() {
+    std::string folderPath;
+    std::cout << "Enter the folder path to organize: ";
+    std::cin >> folderPath;
+
+    organizeFiles(folderPath);
+    std::cout << "✅ Files organized successfully!\n";
+    return 0;
+}
